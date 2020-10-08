@@ -6,6 +6,8 @@ import subprocess
 import datetime
 import subprocess
 import getpass
+import tkinter.simpledialog
+
 
 
 # location of configuration file
@@ -103,25 +105,8 @@ def checkTodayHaveBackup():
 
 
 def getpwd():
-    password = ''
-    root = tk.Tk()
-    pwdbox = tk.Entry(root, show='*')
-
-    def onpwdentry(evt):
-        password = pwdbox.get()
-        root.destroy()
-
-    def onokclick():
-        password = pwdbox.get()
-        root.destroy()
-    tk.Label(root, text='Password').pack(side='top')
-
-    pwdbox.pack(side='top')
-    pwdbox.bind('<Return>', onpwdentry)
-    tk.Button(root, command=onokclick, text='OK').pack(side='top')
-
-    root.mainloop()
-    return password
+    tk.Tk().withdraw()
+    return tkinter.simpledialog.askstring("Password", "Enter password:", show='*')
 
 
 # optimaze logs
