@@ -14,18 +14,18 @@ def fileExists(path):
 
 def createLogFile():
     if (fileExists(backup.LOG_DIR_PATH) is False):
-        open(backup.LOG_DIR_PATH, "w+")
+        open(backup.LOG_DIR_PATH, "w")
 
 
 def createConfFile():
     if(fileExists(backup.CONF_DIR_PATH) is False):
-        with open(backup.CONF_DIR_PATH, "w+") as f:
+        with open(backup.CONF_DIR_PATH, "w") as f:
             f.write("COMMAND=\"\"\nPY3_COMMAND=\"\"")
 
 
 def createDbFile():
     if(fileExists(backup.DB_DIR_PATH) is False):
-        open(backup.DB_DIR_PATH, "w+")
+        open(backup.DB_DIR_PATH, "w")
 
 
 def setupProgram():
@@ -34,7 +34,7 @@ def setupProgram():
 
 def writeSetInterval():
     py_command = backup.readTagFromConf("PY^3_COMMAND")
-    with open(RUNNER_PATH, "w+") as file:
+    with open(RUNNER_PATH, "w") as file:
         file.write("sudo {} {}".format(py_command, BACKUP_PY_PATH))
     os.system("chmod +x {}".format(RUNNER_PATH))
     user = getpass.getuser()
@@ -42,9 +42,21 @@ def writeSetInterval():
     os.system(
         "(crontab -u {} -l; echo {}) | crontab -u {} -".format(user, line, user))
 
+def deleteFiles():
+    if(fileExists(backup.CONF_DIR_PATH)):
+        os.system("rm -f {}".format(backup.CONF_DIR_PATH))
+    if(fileExists(backup.DB_DIR_PATH)):
+        os.system("rm -f {}".format(backup.DB_DIR_PATH))
+    if(fileExists(backup.LOG_DIR_PATH)):
+        os.system("rm -f {}".format(backup.LOG_DIR_PATH))
+    if(fileExists(RUNNER_PATH)):
+        os.system("rm -f {}".format(RUNNER_PATH))  
+    if(fileExists(BACKUP_PY_PATH)):
+        os.system("rm -f {}".format(BACKUP_PY_PATH))                 
 
 if __name__ == "__main__":
     backup.sudoOnly()
+    deleteFiles()
     createConfFile()
     createLogFile()
     createDbFile()
