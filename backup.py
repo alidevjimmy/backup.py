@@ -25,7 +25,7 @@ def sudoOnly():
     try:
         open("/etc/foo" , 'a')
     except IOError as _:
-        pushLogs("NOTE: delete all your {} file content".format(DB_DIR_PATH))
+        pushLogs("\nNOTE: delete all your {} file content".format(DB_DIR_PATH))
 # send gui alert to user
 def alert(title,message):
     root = tk.Tk()
@@ -48,7 +48,7 @@ def readTagFromConf(tag):
                 cmd = checkCmd.group(1)
                 break
     if cmd == "":
-        pushLogs("tag {} not found in {}" .format(tag,CONF_DIR_PATH))
+        pushLogs("\ntag {} not found in {}" .format(tag,CONF_DIR_PATH))
     return cmd           
 
 # write logs in log file that located in LOG_DIR_PATH const
@@ -75,7 +75,7 @@ def checkTodayHaveBackup():
                         have = True
                         break
             except EOFError as _:  
-                pushLogs("NOTE: delete all your {} file content".format(DB_DIR_PATH))
+                pushLogs("\nNOTE: delete all your {} file content".format(DB_DIR_PATH))
                 
     return have
 
