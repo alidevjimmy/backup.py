@@ -11,6 +11,7 @@ LOG_DIR_PATH  = "/var/log/backup.py.log"
 DB_DIR_PATH = "/var/log/backup.py.db"
 DATE_FORMAT = "%Y-%m-%d"
 
+# check user run command using sudo
 def sudoOnly():
     try:
         open("/etc/foo" , 'a')

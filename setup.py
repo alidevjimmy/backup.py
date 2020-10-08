@@ -30,7 +30,7 @@ def setupProgram():
 def writeSetInterval():
     py_command = backup.readTagFromConf("PY^3_COMMAND")
     with open(RUNNER_PATH , "w") as file:
-        file.write("{} {}".format(py_command , BACKUP_PY_PATH))
+        file.write("sudo {} {}".format(py_command , BACKUP_PY_PATH))
     os.system("chmod +x {}".format(RUNNER_PATH))
     line = "@reboot {}".format(RUNNER_PATH)
     os.system("(crontab -l; echo {}) | crontab -".format(line))
