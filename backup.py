@@ -48,7 +48,7 @@ def readTagFromConf(tag):
                 cmd = checkCmd.group(1)
                 break
     if cmd == "":
-        pushLogs("NOTE: delete all your {} file content".format(DB_DIR_PATH))
+        pushLogs("tag {} not found in {}" .format(tag,CONF_DIR_PATH))
     return cmd           
 
 # write logs in log file that located in LOG_DIR_PATH const
