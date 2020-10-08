@@ -1,5 +1,6 @@
 import backup
 import os
+import getpass
 
 RUNNER_PATH = "/usr/local/bin/backup.py.run.sh"
 BACKUP_PY_PATH = "/usr/local/bin/backup.py"
@@ -32,8 +33,9 @@ def writeSetInterval():
     with open(RUNNER_PATH , "w") as file:
         file.write("sudo {} {}".format(py_command , BACKUP_PY_PATH))
     os.system("chmod +x {}".format(RUNNER_PATH))
+    user = getpass.getuser()
     line = "@reboot {}".format(RUNNER_PATH)
-    os.system("(crontab -l; echo {}) | crontab -".format(line))
+    os.system("(crontab -u {} -l; echo {}) | crontab -u {} -".format(user , line , user))
 
 
 if __name__ == "__main__":
@@ -43,3 +45,4 @@ if __name__ == "__main__":
     createDbFile()
     setupProgram()
     writeSetInterval()
+    print("Setup Completed!")

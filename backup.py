@@ -47,7 +47,7 @@ def readTagFromConf(tag):
             if checkCmd != None:
                 cmd = checkCmd.group(1)
                 break
-    if len(cmd) == 0:
+    if cmd == "":
         pushLogs("NOTE: delete all your {} file content".format(DB_DIR_PATH))
     return cmd           
 
