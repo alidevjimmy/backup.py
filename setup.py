@@ -35,9 +35,12 @@ def writeSetInterval():
     line = "@reboot {}".format(RUNNER_PATH)
     os.system("(crontab -l; echo {}) | crontab -".format(line))
 
+def installTkinter():
+    os.system("sudo apt-get install python3-tk")
 
 if __name__ == "__main__":
     backup.sudoOnly()
+    installTkinter()
     createConfFile()
     createLogFile()
     createDbFile()
