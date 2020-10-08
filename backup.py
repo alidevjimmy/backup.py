@@ -4,9 +4,9 @@ from tkinter import messagebox as tkMessageBox
 import re
 import subprocess
 import datetime
-import subprocess
 import getpass
 import tkinter.simpledialog
+import os
 
 
 
@@ -128,4 +128,4 @@ if __name__ == "__main__":
                 print("Backup Completed!")
         else:
             pwd = getpwd()
-            subprocess.call("echo {} | sudo {}".format(pwd, RUNNER_PATH))
+            subprocess.call("echo {} | sudo python3 backup.py".format(pwd) , shell=True)
