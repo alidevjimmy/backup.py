@@ -1,6 +1,9 @@
 import backup
 import os
 
+RUNNER_PATH = "/usr/local/bin/backup.py.run.sh"
+BACKUP_PY_PATH = "/usr/local/bin/backup.py"
+
 def fileExists(path):
     if os.path.isfile(path) and os.access(path , os.R_OK):
         return True
@@ -19,10 +22,24 @@ def createDbFile():
         with open(backup.DB_DIR_PATH ,"w") as db:
             db.write("COMMAND=\"\"")
 
+
+def setupProgram():
+    os.system("cp backup.py {}".format(BACKUP_PY_PATH))
+    
+
+def writeSetInterval():
+    py_command = backup.readTagFromConf("PY^3_COMMAND")
+    with open(RUNNER_PATH , "w") as file:
+        file.write("{} {}".format(py_command , BACKUP_PY_PATH))
+    os.system("chmod +x {}".format(RUNNER_PATH))
+    line = "@reboot {}".format(RUNNER_PATH)
+    os.system("(crontab -l; echo {}) | crontab -".format(line))
+
+
 if __name__ == "__main__":
-    backup.checkSudo()
+    backup.sudoOnly()
     createConfFile()
     createLogFile()
-    createLogFile()
-    # install tk 
-    # dont use backup when you does not have tkinter
+    createDbFile()
+    setupProgram()
+    writeSetInterval()

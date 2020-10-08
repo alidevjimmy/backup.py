@@ -11,11 +11,11 @@ LOG_DIR_PATH  = "/var/log/backup.py.log"
 DB_DIR_PATH = "/var/log/backup.py.db"
 DATE_FORMAT = "%Y-%m-%d"
 
-def checkSudo():
+def sudoOnly():
     try:
         open("/etc/foo" , 'a')
     except IOError as _:
-        sys.exit("You should run program as root!")
+        pushLogs("NOTE: delete all your {} file content".format(DB_DIR_PATH))
 
 def alert(title,message):
     root = tk.Tk()
@@ -25,18 +25,6 @@ def alert(title,message):
 def askQuestion(title , message):
     answer = tkMessageBox.askyesno(title , message)
     return answer
-
-# makBackup function just run a command which located in /etc/backup.py.conf
-def makeBackup(command):
-    checkSudo()
-    if checkTodayHaveBackup() is False:
-        if askQuestion("Backup" , "Do you want to get backup now?"):
-            pushToDB("Started: {}\n".format(datetime.datetime.today().strftime(DATE_FORMAT)))
-            log = subprocess.getoutput(command)
-            log = createLog(log)
-            pushLogs(log)
-            pushToDB("Completed: {}\n".format(datetime.datetime.today().strftime(DATE_FORMAT)))
-            print("Backup Completed!")
 
 
 def readTagFromConf(tag):
@@ -49,7 +37,7 @@ def readTagFromConf(tag):
                 cmd = checkCmd.group(1)
                 break
     if len(cmd) == 0:
-        sys.exit("{} not found in {}".format(tag ,CONF_DIR_PATH)) 
+        pushLogs("NOTE: delete all your {} file content".format(DB_DIR_PATH))
     return cmd           
 
 def pushLogs(log):
@@ -65,16 +53,30 @@ def checkTodayHaveBackup():
     with open(DB_DIR_PATH , "r") as db:
         for d in db:
             try:
-                date = d.split(": ")[1]
-                y,m,d = date.split('-')
-                date = datetime.datetime(int(y),int(m),int(d)).strftime(DATE_FORMAT)
-                if date == datetime.datetime.today().strftime(DATE_FORMAT):
-                    have = True
-                    break
-            except EOFError as _:
-                sys.exit("delete all your {} file content".format(DB_DIR_PATH))    
+                if d.split(": ")[0] == "Completed":
+                    date = d.split(": ")[1]
+                    y,m,d = date.split('-')
+                    date = datetime.datetime(int(y),int(m),int(d)).strftime(DATE_FORMAT)
+                    if date == datetime.datetime.today().strftime(DATE_FORMAT):
+                        have = True
+                        break
+            except EOFError as _:  
+                pushLogs("NOTE: delete all your {} file content".format(DB_DIR_PATH))
+                
     return have
 
 def createLog(log):
     return '\n'+"-"*20+"\nDate Time: " + str(datetime.datetime.now()) + "\n" + log
   
+
+
+if __name__ == "__main__":
+    sudoOnly()
+    if checkTodayHaveBackup() is False:
+        if askQuestion("Backup" , "Do you want to get backup now?"):
+            pushToDB("Started: {}\n".format(datetime.datetime.today().strftime(DATE_FORMAT)))
+            log = subprocess.getoutput(readTagFromConf("COMMAND"))
+            log = createLog(log)
+            pushLogs(log)
+            pushToDB("Completed: {}\n".format(datetime.datetime.today().strftime(DATE_FORMAT)))
+            print("Backup Completed!")
