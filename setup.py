@@ -1,9 +1,6 @@
 import backup
 import os
 
-RUNNER_PATH = "/usr/local/bin/backup.py.run.sh"
-BACKUP_PY_PATH = "/usr/local/bin/backup.py"
-
 
 def fileExists(path):
     if os.path.isfile(path) and os.access(path, os.R_OK):
@@ -28,15 +25,15 @@ def createDbFile():
 
 
 def setupProgram():
-    os.system("cp backup.py {}".format(BACKUP_PY_PATH))
+    os.system("cp backup.py {}".format(backup.BACKUP_PY_PATH))
 
 
 def writeSetInterval():
-    with open(RUNNER_PATH, "w") as file:
-        file.write("sudo python3 {}".format(BACKUP_PY_PATH))
-    os.system("chmod +x {}".format(RUNNER_PATH))
+    with open(backup.RUNNER_PATH, "w") as file:
+        file.write("python3 {}".format(backup.BACKUP_PY_PATH))
+    os.system("chmod +x {}".format(backup.RUNNER_PATH))
     user = os.getenv("SUDO_USER")
-    line = "@reboot {}".format(RUNNER_PATH)
+    line = "@reboot {}".format(backup.RUNNER_PATH)
     os.system(
         "(crontab -u {} -l; echo {}) | crontab -u {} -".format(user, line, user))
 
@@ -48,10 +45,10 @@ def deleteFiles():
         os.system("rm -f {}".format(backup.DB_DIR_PATH))
     if(fileExists(backup.LOG_DIR_PATH)):
         os.system("rm -f {}".format(backup.LOG_DIR_PATH))
-    if(fileExists(RUNNER_PATH)):
-        os.system("rm -f {}".format(RUNNER_PATH))
-    if(fileExists(BACKUP_PY_PATH)):
-        os.system("rm -f {}".format(BACKUP_PY_PATH))
+    if(fileExists(backup.RUNNER_PATH)):
+        os.system("rm -f {}".format(backup.RUNNER_PATH))
+    if(fileExists(backup.BACKUP_PY_PATH)):
+        os.system("rm -f {}".format(backup.BACKUP_PY_PATH))
 
 
 if __name__ == "__main__":
