@@ -20,7 +20,7 @@ def createLogFile():
 def createConfFile():
     if(fileExists(backup.CONF_DIR_PATH) is False):
         with open(backup.CONF_DIR_PATH, "w") as f:
-            f.write("COMMAND=\"\"\nPY3_COMMAND=\"\"")
+            f.write("COMMAND=\"\"")
 
 
 def createDbFile():
@@ -33,9 +33,8 @@ def setupProgram():
 
 
 def writeSetInterval():
-    py_command = backup.readTagFromConf("PY^3_COMMAND")
     with open(RUNNER_PATH, "w") as file:
-        file.write("sudo {} {}".format(py_command, BACKUP_PY_PATH))
+        file.write("sudo python3 {}".format(BACKUP_PY_PATH))
     os.system("chmod +x {}".format(RUNNER_PATH))
     user = getpass.getuser()
     line = "@reboot {}".format(RUNNER_PATH)
